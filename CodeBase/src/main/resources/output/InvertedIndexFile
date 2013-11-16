@@ -1,0 +1,25 @@
+     approaches[ 1]	-->  Doc_4.txt
+           base[ 2]	-->  Doc_1.txt	-->  Doc_2.txt
+            but[ 1]	-->  Doc_2.txt
+        concept[ 1]	-->  Doc_2.txt
+        content[ 2]	-->  Doc_1.txt	-->  Doc_2.txt
+        dynamic[ 2]	-->  Doc_1.txt	-->  Doc_2.txt
+      filtering[ 2]	-->  Doc_2.txt	-->  Doc_3.txt
+    information[ 3]	-->  Doc_1.txt	-->  Doc_2.txt	-->  Doc_3.txt
+       involved[ 1]	-->  Doc_1.txt
+       learning[ 1]	-->  Doc_4.txt
+        machine[ 1]	-->  Doc_4.txt
+          model[ 1]	-->  Doc_4.txt
+           need[ 2]	-->  Doc_1.txt	-->  Doc_2.txt
+          needs[ 1]	-->  Doc_4.txt
+       querying[ 1]	-->  Doc_1.txt
+    recommender[ 2]	-->  Doc_3.txt	-->  Doc_4.txt
+      retrieval[ 2]	-->  Doc_1.txt	-->  Doc_2.txt
+        reverse[ 1]	-->  Doc_2.txt
+         static[ 2]	-->  Doc_1.txt	-->  Doc_2.txt
+       subclass[ 1]	-->  Doc_3.txt
+         system[ 1]	-->  Doc_3.txt
+        systems[ 2]	-->  Doc_3.txt	-->  Doc_4.txt
+           used[ 1]	-->  Doc_4.txt
+           user[ 1]	-->  Doc_4.txt
+          where[ 1]	-->  Doc_2.txt
