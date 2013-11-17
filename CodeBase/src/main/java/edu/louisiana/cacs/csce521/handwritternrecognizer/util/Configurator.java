@@ -52,6 +52,11 @@ public class Configurator {
 		return m_configFile.getProperty("REGEX_STOP_WORDS");
 	}
 
+	public String get_sample_train_file() {
+		return get_document_input_dir()+File.separator
+				+ m_configFile.getProperty("SAMPLE_TRAIN_FILE");
+	}
+	
 	public static void main(String[] args) {
 		Configurator c = new Configurator();
 		m_logger.debug(c.loadConfigValues(System.getProperty("user.dir") + File.separator
@@ -59,4 +64,5 @@ public class Configurator {
 				+ "resources" + File.separator + "inforetrieval.properties"));
 		m_logger.debug("INPUT DIR:"+c.get_document_input_dir());
 	}
+
 }

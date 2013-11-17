@@ -25,6 +25,9 @@ public class Main {
 		if(!xConfigurator.loadConfigValues(xPropertiesFilePath))
 			return;
 		
+		HWRClassifier hwrClassifier = new HWRClassifier(xConfigurator);
+		hwrClassifier.classifyData();
+		
 	}
 
 }
