@@ -7,9 +7,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * Reads the given configuration file and acts as data renderer for other classes.
+ * Reads the given configuration file and acts as data renderer for other
+ * classes.
+ * 
  * @author rsunkara
- *
+ * 
  */
 public class Configurator {
 
@@ -42,27 +44,49 @@ public class Configurator {
 		return get_resources_dir() + File.separator
 				+ m_configFile.getProperty("DOC_INPUT_DIR");
 	}
-	
+
 	public String get_output_dir() {
 		return get_resources_dir() + File.separator
 				+ m_configFile.getProperty("OUTPUT_DIR");
-	}	
-	
-	public String get_regex_stop_words(){
-		return m_configFile.getProperty("REGEX_STOP_WORDS");
 	}
 
 	public String get_sample_train_file() {
-		return get_document_input_dir()+File.separator
+		return get_document_input_dir() + File.separator
 				+ m_configFile.getProperty("SAMPLE_TRAIN_FILE");
 	}
+
+	public String get_sample_test_file() {
+		return get_document_input_dir() + File.separator
+				+ m_configFile.getProperty("SAMPLE_TEST_FILE");
+	}
 	
+	public String get_train_data_file() {
+		return get_document_input_dir() + File.separator
+				+ m_configFile.getProperty("TRAIN_FILE");
+	}
+
+	public String get_test_data_file() {
+		return get_document_input_dir() + File.separator
+				+ m_configFile.getProperty("TEST_FILE");
+	}
+
+	public String get_classified_labels_file() {
+		return get_output_dir() + File.separator
+				+ m_configFile.getProperty("CLASSIFIED_LABELS");
+	}
+	
+	public String get_classified_data_file() {
+		return get_output_dir() + File.separator
+				+ m_configFile.getProperty("CLASSIFIED_DATA_FILE");
+	}
+
 	public static void main(String[] args) {
 		Configurator c = new Configurator();
-		m_logger.debug(c.loadConfigValues(System.getProperty("user.dir") + File.separator
-				+ "src" + File.separator + "main" + File.separator
-				+ "resources" + File.separator + "inforetrieval.properties"));
-		m_logger.debug("INPUT DIR:"+c.get_document_input_dir());
+		m_logger.debug(c.loadConfigValues(System.getProperty("user.dir")
+				+ File.separator + "src" + File.separator + "main"
+				+ File.separator + "resources" + File.separator
+				+ "inforetrieval.properties"));
+		m_logger.debug("INPUT DIR:" + c.get_document_input_dir());
 	}
 
 }

@@ -2,7 +2,7 @@ package edu.louisiana.cacs.csce521.handwritternrecognizer.exception;
 
 /**
  * 
- * Custom exception class for Information Retrieval operations
+ * Custom exception class for HandWritten Number Recognition operations
  * @author rsunkara
  *
  */
