@@ -9,6 +9,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import weka.classifiers.Classifier;
+import weka.classifiers.Evaluation;
 import weka.classifiers.bayes.NaiveBayes;
 import weka.core.Instances;
 import weka.core.converters.CSVSaver;
@@ -41,6 +42,8 @@ public class HWRClassifier {
 	private Instances m_TrainingData = null;
 
 	private Instances m_TestData = null;
+	
+	private Evaluation m_Evaluation = null;
 
 	/**
 	 * Constructs a HWRClassifier.
@@ -60,6 +63,7 @@ public class HWRClassifier {
 		try {
 			// m_Classifier = Classifier.forName(p_ClassifierName, p_options);
 			m_Classifier = new NaiveBayes();
+			//m_Classifier = new MultilayerPerceptron();
 			// m_Classifier.setOptions(p_options);
 		} catch (Exception e) {
 			m_logger.error("Exception caught while loading classifier", e);
@@ -83,11 +87,12 @@ public class HWRClassifier {
 	 * @version 1.0
 	 */
 	public void classifyData() throws HWRException {
-
+		m_logger.debug("Enter classifyData()");
 		// 1.Read Data
 		preProcess();
 
 		// 2.Build Classifier ( Train )
+		m_logger.debug("Training the  classifier.....");
 		try {
 			m_Classifier.buildClassifier(m_TrainingData);
 		} catch (Exception e) {
@@ -95,6 +100,8 @@ public class HWRClassifier {
 			throw new HWRException("Exception caught while building classifier");
 		}
 
+		m_logger.debug("Classifier.....Trained Successfully...Classifying data");
+		
 		// 3.Classify Test data
 		Instances xClassifiedData = new Instances(m_TestData);
 		double[] xObtainedClassLabels = new double[m_TestData.numInstances()];
@@ -113,7 +120,13 @@ public class HWRClassifier {
 		// 4.Prints the classified information
 		printClassifiedData(xClassifiedData);
 		printClassifiedData(xObtainedClassLabels);
+		
+		//5. Evaluate ( 10 Fold Cross Validation
+		evaluate();
+		m_logger.debug("Exit classifyData()");
 	}
+
+	
 
 	/**
 	 * It reads the Training data and test data.
@@ -127,9 +140,9 @@ public class HWRClassifier {
 	 * @since 1.0
 	 */
 	private void preProcess() throws HWRException {
-
-		m_TrainingData = readData(m_hwrConfig.get_sample_train_file());
-		m_TestData = readData(m_hwrConfig.get_sample_test_file());
+		m_logger.debug("Enter preProcess()");
+		m_TrainingData = readData(m_hwrConfig.get_train_data_file());
+		m_TestData = readData(m_hwrConfig.get_test_data_file());
 
 		try {
 			makeTrainDataClassifiable();
@@ -148,6 +161,7 @@ public class HWRClassifier {
 			throw new HWRException(
 					"Error caught while making test data classifiable");
 		}
+		m_logger.debug("Exit preProcess()");
 	}
 
 	/**
@@ -264,5 +278,22 @@ public class HWRClassifier {
 		xClassifiedDataPrinter.flush();
 		xClassifiedDataPrinter.close();
 
+	}
+	
+	
+	/**
+	 * Evaluates the classifier with 10 fold cross validation.
+	 */
+	private void evaluate() {
+		m_logger.debug("Enter evaluate()");
+	    try {
+			m_Evaluation = new Evaluation(m_TrainingData);
+			m_Evaluation.crossValidateModel(
+			    m_Classifier, m_TrainingData, 2, m_TrainingData.getRandomNumberGenerator(1));
+			m_logger.info(m_Evaluation.toSummaryString());
+		} catch (Exception e) {
+			m_logger.error("Exception caught while evaluating",e);
+		}
+	    m_logger.debug("Exit evaluate()");
 	}
 }
