@@ -10,7 +10,6 @@ import org.apache.commons.logging.LogFactory;
 
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
-import weka.classifiers.bayes.NaiveBayes;
 import weka.core.Instances;
 import weka.core.converters.CSVSaver;
 import weka.core.converters.ConverterUtils.DataSource;
@@ -31,19 +30,20 @@ import edu.louisiana.cacs.csce521.handwritternrecognizer.util.Configurator;
  * @since November, 14,2013
  * 
  */
-public class HWRClassifier {
+public class HWRClassifier implements IClassifier{
 
+	//Logger object to log the messages
 	private static Log m_logger = LogFactory.getLog(HWRClassifier.class);
 
+	//Configuration object which holds all the configured properties
 	private Configurator m_hwrConfig = null;
 
+	
 	private Classifier m_Classifier = null;
 
 	private Instances m_TrainingData = null;
 
 	private Instances m_TestData = null;
-	
-	private Evaluation m_Evaluation = null;
 
 	/**
 	 * Constructs a HWRClassifier.
@@ -61,12 +61,11 @@ public class HWRClassifier {
 			String[] p_options) {
 		m_hwrConfig = p_hwrConfig;
 		try {
-			// m_Classifier = Classifier.forName(p_ClassifierName, p_options);
-			m_Classifier = new NaiveBayes();
-			//m_Classifier = new MultilayerPerceptron();
-			// m_Classifier.setOptions(p_options);
+			m_Classifier = (Classifier) Class.forName(p_ClassifierName)
+					.newInstance();
+			m_logger.trace("Succesfully loaded classifier:" + p_ClassifierName);
 		} catch (Exception e) {
-			m_logger.error("Exception caught while loading classifier", e);
+			m_logger.error("Exception caught while instantiating classifier", e);
 		}
 	}
 
@@ -101,7 +100,7 @@ public class HWRClassifier {
 		}
 
 		m_logger.debug("Classifier.....Trained Successfully...Classifying data");
-		
+
 		// 3.Classify Test data
 		Instances xClassifiedData = new Instances(m_TestData);
 		double[] xObtainedClassLabels = new double[m_TestData.numInstances()];
@@ -120,13 +119,12 @@ public class HWRClassifier {
 		// 4.Prints the classified information
 		printClassifiedData(xClassifiedData);
 		printClassifiedData(xObtainedClassLabels);
-		
-		//5. Evaluate ( 10 Fold Cross Validation
-		evaluate();
+
+		// 5. Evaluate ( 10 Fold Cross Validation
+		Evaluation xEvalutionResult = evaluate();
+		printEvaluationResult(xEvalutionResult);
 		m_logger.debug("Exit classifyData()");
 	}
-
-	
 
 	/**
 	 * It reads the Training data and test data.
@@ -224,15 +222,16 @@ public class HWRClassifier {
 		try {
 			dummyLabel.setInputFormat(m_TestData);
 		} catch (Exception e) {
-			m_logger.error("Error caught while modifying test data",e);
+			m_logger.error("Error caught while modifying test data", e);
 			throw new HWRException("Error caught while modifying test data");
 		}
 
 		try {
 			m_TestData = Filter.useFilter(m_TestData, dummyLabel);
 		} catch (Exception e) {
-			m_logger.error("Error caught while applying filter on test data",e);
-			throw new HWRException("Error caught while applying filter on test data");
+			m_logger.error("Error caught while applying filter on test data", e);
+			throw new HWRException(
+					"Error caught while applying filter on test data");
 		}
 
 		if (m_TestData.classIndex() == -1) {
@@ -273,27 +272,58 @@ public class HWRClassifier {
 			throw new HWRException("Unable to print classified labels data");
 		}
 		for (double classLabel : p_clsLabels) {
-			xClassifiedDataPrinter.println((int)classLabel);
+			xClassifiedDataPrinter.println((int) classLabel);
 		}
 		xClassifiedDataPrinter.flush();
 		xClassifiedDataPrinter.close();
 
 	}
-	
-	
+
 	/**
 	 * Evaluates the classifier with 10 fold cross validation.
+	 * @return xEvaluationResult
+	 * 			- <code>weka.classifiers.Evaluation</code> object which holds
+	 *            the evaluation result.
+	 * @since 1.0	
 	 */
-	private void evaluate() {
+	public Evaluation evaluate() {
 		m_logger.debug("Enter evaluate()");
-	    try {
-			m_Evaluation = new Evaluation(m_TrainingData);
-			m_Evaluation.crossValidateModel(
-			    m_Classifier, m_TrainingData, 2, m_TrainingData.getRandomNumberGenerator(1));
-			m_logger.info(m_Evaluation.toSummaryString());
+		Evaluation xEvaluationResult = null;
+		try {
+			xEvaluationResult = new Evaluation(m_TrainingData);
+			xEvaluationResult.crossValidateModel(m_Classifier, m_TrainingData, 2,
+					m_TrainingData.getRandomNumberGenerator(1));
+
 		} catch (Exception e) {
-			m_logger.error("Exception caught while evaluating",e);
+			m_logger.error("Exception caught while evaluating", e);
 		}
-	    m_logger.debug("Exit evaluate()");
+		m_logger.debug("Exit evaluate()");
+		return xEvaluationResult;
+	}
+
+	/**
+	 * Print the evaluation result in to a file.
+	 * 
+	 * @param p_Evaluation
+	 *            - <code>weka.classifiers.Evaluation</code> object which holds
+	 *            the evaluation result.
+	 * @since 1.0
+	 */
+	private void printEvaluationResult(Evaluation p_Evaluation) {
+		m_logger.info(p_Evaluation.toSummaryString());
+		PrintWriter xEvaluationReportWriter = null;
+		try {
+			xEvaluationReportWriter = new PrintWriter(
+					m_hwrConfig.get_output_dir() + File.separator
+							+ m_Classifier.getClass().getName());
+		} catch (FileNotFoundException e) {
+			m_logger.error(
+					"FileNotFoundException caught while writing evaluaiton result",
+					e);
+		}
+		xEvaluationReportWriter.print(p_Evaluation.toSummaryString());
+		xEvaluationReportWriter.flush();
+		if (xEvaluationReportWriter != null)
+			xEvaluationReportWriter.close();
 	}
 }

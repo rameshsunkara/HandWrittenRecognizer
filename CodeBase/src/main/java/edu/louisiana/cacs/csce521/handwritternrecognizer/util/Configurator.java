@@ -79,7 +79,11 @@ public class Configurator {
 		return get_output_dir() + File.separator
 				+ m_configFile.getProperty("CLASSIFIED_DATA_FILE");
 	}
-
+	
+	public String get_classifier(){
+		return m_configFile.getProperty("CLASSIFIER");
+	}
+	
 	public static void main(String[] args) {
 		Configurator c = new Configurator();
 		m_logger.debug(c.loadConfigValues(System.getProperty("user.dir")
