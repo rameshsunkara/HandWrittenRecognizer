@@ -291,9 +291,8 @@ public class HWRClassifier implements IClassifier{
 		Evaluation xEvaluationResult = null;
 		try {
 			xEvaluationResult = new Evaluation(m_TrainingData);
-			xEvaluationResult.crossValidateModel(m_Classifier, m_TrainingData, 2,
+			xEvaluationResult.crossValidateModel(m_Classifier, m_TrainingData, 10,
 					m_TrainingData.getRandomNumberGenerator(1));
-
 		} catch (Exception e) {
 			m_logger.error("Exception caught while evaluating", e);
 		}
