@@ -249,7 +249,8 @@ public class HWRClassifier implements IClassifier{
 	private void printClassifiedData(Instances labeled) {
 		CSVSaver csvSaver = new CSVSaver();
 		try {
-			csvSaver.setFile(new File(m_hwrConfig.get_classifier_name()+"_classified_data"));
+			csvSaver.setFile(new File(m_hwrConfig.get_output_dir() + File.separator
+					+m_hwrConfig.get_classifier_name()+"_classified_data.csv"));
 			csvSaver.setInstances(labeled);
 			csvSaver.writeBatch();
 		} catch (IOException e) {
@@ -266,9 +267,10 @@ public class HWRClassifier implements IClassifier{
 	 */
 	private void printClassifiedData(double[] p_clsLabels) throws HWRException {
 		PrintWriter xClassifiedDataPrinter = null;
+		
 		try {
-			xClassifiedDataPrinter = new PrintWriter(new File(
-					m_hwrConfig.get_classifier_name()+"_labels"));
+			xClassifiedDataPrinter = new PrintWriter(new File(m_hwrConfig.get_output_dir() + File.separator
+					+ m_hwrConfig.get_classifier_name()+"_labels"));
 		} catch (FileNotFoundException e) {
 			m_logger.error("Unable to print classified labels data", e);
 			throw new HWRException("Unable to print classified labels data");
@@ -293,7 +295,7 @@ public class HWRClassifier implements IClassifier{
 		Evaluation xEvaluationResult = null;
 		try {
 			xEvaluationResult = new Evaluation(m_TrainingData);
-			xEvaluationResult.crossValidateModel(m_Classifier, m_TrainingData,10,
+			xEvaluationResult.crossValidateModel(m_Classifier, m_TrainingData,2,
 					m_TrainingData.getRandomNumberGenerator(1));
 		} catch (Exception e) {
 			m_logger.error("Exception caught while evaluating", e);
@@ -311,7 +313,10 @@ public class HWRClassifier implements IClassifier{
 	 * @since 1.0
 	 */
 	private void printEvaluationResult(Evaluation p_Evaluation) {
+		m_logger.info(m_hwrConfig.get_output_dir() + File.separator
+							+ m_hwrConfig.get_classifier_name()+"_EvalResults");
 		m_logger.info(p_Evaluation.toSummaryString());
+		
 		PrintWriter xEvaluationReportWriter = null;
 		try {
 			xEvaluationReportWriter = new PrintWriter(

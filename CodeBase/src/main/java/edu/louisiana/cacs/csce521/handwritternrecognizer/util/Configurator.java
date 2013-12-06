@@ -59,7 +59,7 @@ public class Configurator {
 		return get_document_input_dir() + File.separator
 				+ m_configFile.getProperty("SAMPLE_TEST_FILE");
 	}
-	
+
 	public String get_train_data_file() {
 		return get_document_input_dir() + File.separator
 				+ m_configFile.getProperty("TRAIN_FILE");
@@ -74,20 +74,21 @@ public class Configurator {
 		return get_output_dir() + File.separator
 				+ m_configFile.getProperty("CLASSIFIED_LABELS");
 	}
-	
+
 	public String get_classified_data_file() {
 		return get_output_dir() + File.separator
 				+ m_configFile.getProperty("CLASSIFIED_DATA_FILE");
 	}
-	
-	public String get_classifier(){
+
+	public String get_classifier() {
 		return m_configFile.getProperty("CLASSIFIER");
 	}
-	
-	public String get_classifier_name(){
-		return m_configFile.getProperty("CLASSIFIER").substring(m_configFile.getProperty("CLASSIFIER").lastIndexOf("."));
+
+	public String get_classifier_name() {
+		return m_configFile.getProperty("CLASSIFIER").substring(
+				m_configFile.getProperty("CLASSIFIER").lastIndexOf(".") + 1);
 	}
-	
+
 	public static void main(String[] args) {
 		Configurator c = new Configurator();
 		m_logger.debug(c.loadConfigValues(System.getProperty("user.dir")
