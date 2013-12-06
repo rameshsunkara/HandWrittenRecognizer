@@ -84,13 +84,17 @@ public class Configurator {
 		return m_configFile.getProperty("CLASSIFIER");
 	}
 	
+	public String get_classifier_name(){
+		return m_configFile.getProperty("CLASSIFIER").substring(m_configFile.getProperty("CLASSIFIER").lastIndexOf("."));
+	}
+	
 	public static void main(String[] args) {
 		Configurator c = new Configurator();
 		m_logger.debug(c.loadConfigValues(System.getProperty("user.dir")
 				+ File.separator + "src" + File.separator + "main"
 				+ File.separator + "resources" + File.separator
-				+ "inforetrieval.properties"));
-		m_logger.debug("INPUT DIR:" + c.get_document_input_dir());
+				+ "HandWrittenRecognizer.properties"));
+		m_logger.debug("INPUT DIR:" + c.get_classifier_name());
 	}
 
 }

@@ -41,10 +41,10 @@ public class Main {
 
 		String[] xClassifierOptions = new String[1];
 		xClassifierOptions[0] = "-U";
-		//Construct the HWRClassifier object
-		HWRClassifier hwrClassifier = new HWRClassifier(xConfigurator,
-				xConfigurator.get_classifier(), xClassifierOptions);
 		try {
+			//Construct the HWRClassifier object
+			HWRClassifier hwrClassifier = new HWRClassifier(xConfigurator,
+					xConfigurator.get_classifier(), xClassifierOptions);
 			//Classify the data
 			hwrClassifier.classifyData();
 		} catch (HWRException e) {

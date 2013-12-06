@@ -56,9 +56,10 @@ public class HWRClassifier implements IClassifier{
 	 *            has to be used.
 	 * @param p_options
 	 *            - A <code>String[]</code> which holds the classifier options.
+	 * @throws HWRException 
 	 */
 	public HWRClassifier(Configurator p_hwrConfig, String p_ClassifierName,
-			String[] p_options) {
+			String[] p_options) throws HWRException {
 		m_hwrConfig = p_hwrConfig;
 		try {
 			m_Classifier = (Classifier) Class.forName(p_ClassifierName)
@@ -66,6 +67,7 @@ public class HWRClassifier implements IClassifier{
 			m_logger.trace("Succesfully loaded classifier:" + p_ClassifierName);
 		} catch (Exception e) {
 			m_logger.error("Exception caught while instantiating classifier", e);
+			throw new HWRException("Unable to Instantiate Classifer");
 		}
 	}
 
@@ -247,7 +249,7 @@ public class HWRClassifier implements IClassifier{
 	private void printClassifiedData(Instances labeled) {
 		CSVSaver csvSaver = new CSVSaver();
 		try {
-			csvSaver.setFile(new File(m_hwrConfig.get_classified_data_file()));
+			csvSaver.setFile(new File(m_hwrConfig.get_classifier_name()+"_classified_data"));
 			csvSaver.setInstances(labeled);
 			csvSaver.writeBatch();
 		} catch (IOException e) {
@@ -266,7 +268,7 @@ public class HWRClassifier implements IClassifier{
 		PrintWriter xClassifiedDataPrinter = null;
 		try {
 			xClassifiedDataPrinter = new PrintWriter(new File(
-					m_hwrConfig.get_classified_labels_file()));
+					m_hwrConfig.get_classifier_name()+"_labels"));
 		} catch (FileNotFoundException e) {
 			m_logger.error("Unable to print classified labels data", e);
 			throw new HWRException("Unable to print classified labels data");
@@ -291,7 +293,7 @@ public class HWRClassifier implements IClassifier{
 		Evaluation xEvaluationResult = null;
 		try {
 			xEvaluationResult = new Evaluation(m_TrainingData);
-			xEvaluationResult.crossValidateModel(m_Classifier, m_TrainingData, 10,
+			xEvaluationResult.crossValidateModel(m_Classifier, m_TrainingData,10,
 					m_TrainingData.getRandomNumberGenerator(1));
 		} catch (Exception e) {
 			m_logger.error("Exception caught while evaluating", e);
@@ -314,7 +316,7 @@ public class HWRClassifier implements IClassifier{
 		try {
 			xEvaluationReportWriter = new PrintWriter(
 					m_hwrConfig.get_output_dir() + File.separator
-							+ m_Classifier.getClass().getName());
+							+ m_hwrConfig.get_classifier_name()+"_EvalResults");
 		} catch (FileNotFoundException e) {
 			m_logger.error(
 					"FileNotFoundException caught while writing evaluaiton result",
